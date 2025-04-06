@@ -4,6 +4,12 @@ namespace Matrix2dLib
     public class Matrix2d : IEquatable<Matrix2d>
     {
         int a, b, c, d; // private fields
+
+        // Public properties to expose private fields
+        public int A => a;
+        public int B => b;
+        public int C => c;
+        public int D => d;
         /*
         -----
         |a b|
@@ -100,6 +106,59 @@ namespace Matrix2dLib
         // operację transpozycji macierzy 
         public static Matrix2d Transpose(Matrix2d m)
             => new Matrix2d(m.a, m.c, m.b, m.d);
+
+        // Metoda obliczająca wyznacznik macierzy
+        public int Det()
+            => a * d - b * c;
+
+        // Metoda klasy obliczająca wyznacznik macierzy
+        public static int Determinant(Matrix2d matrix)
+            => matrix.a * matrix.d - matrix.b * matrix.c;
+
+        // Operator jawnego rzutowania na tablicę int[2,2]
+        public static explicit operator int[,](Matrix2d matrix)
+            => new int[,] { { matrix.a, matrix.b }, { matrix.c, matrix.d } };
+
+        public static Matrix2d Parse(string input)
+        {
+            try
+            {
+                // Usunięcie białych znaków
+                input = input.Replace(" ", "");
+
+                // Sprawdzenie formatu
+                if (!input.StartsWith("[[") || !input.EndsWith("]]"))
+                    throw new FormatException("Nieprawidłowy format");
+
+                // Usunięcie nawiasów z początku i końca
+                input = input.Substring(2, input.Length - 4);
+
+                // Podział na wiersze
+                var rows = input.Split("],[");
+
+                if (rows.Length != 2)
+                    throw new FormatException("Nieprawidłowy format");
+
+                // Podział na elementy
+                var row1 = rows[0].Split(',');
+                var row2 = rows[1].Split(',');
+
+                if (row1.Length != 2 || row2.Length != 2)
+                    throw new FormatException("Nieprawidłowy format");
+
+                
+                int a = int.Parse(row1[0]);
+                int b = int.Parse(row1[1]);
+                int c = int.Parse(row2[0]);
+                int d = int.Parse(row2[1]);
+
+                return new Matrix2d(a, b, c, d);
+            }
+            catch (Exception ex)
+            {
+                throw new FormatException("Nieprawidłowy format", ex);
+            }
+        }
     }
 }
 
